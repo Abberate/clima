@@ -1,7 +1,9 @@
+// Assurez-vous que ce fichier et cette classe existent
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:permission_handler/permission_handler.dart';
-
+import 'package:clima/services/networking.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:clima/screens/location_screen.dart';
+import 'package:clima/services/weather.dart';
 
 class LoadingScreen extends StatefulWidget {
   @override
@@ -10,52 +12,28 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
 
-  Future<void> getLocation() async {
-    // Check and request location permission if not granted
-    if (await _checkLocationPermission()) {
-      try {
-        Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.low);
-        print(position);
-      } catch (e) {
-        print("Error getting location: $e");
-        // Handle error getting location
-      }
-    } else {
-      // Handle case when location permission is not granted
-      // You can show a dialog or a snackbar to inform the user
-      // and provide them with an option to grant the permission.
-      // For simplicity, we are printing an error message here.
-      print("Location permission denied.");
-    }
+  @override
+  void initState() {
+    super.initState();
+    getLocationData();
   }
 
-  Future<bool> _checkLocationPermission() async {
-    if (await Permission.location.isGranted) {
-      return true;
-    } else {
-      // Request permission
-      var status = await Permission.location.request();
-      return status.isGranted;
-    }
-  }
+  void getLocationData() async {
+    var weatherData = await WeatherModel().getLocationWeather(); // A revoir
 
-/*  void getLocation() {
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
-    print(position);
-  }*/
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return LocationScreen(locationWeather: weatherData);
+    }));
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            //Get the current location
-            getLocation();
-
-          },
-          child: Text('Get Location'),
+        child: SpinKitFadingCircle(
+          color: Colors.white,
+          size: 100.0,
         ),
       ),
     );
