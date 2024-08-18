@@ -1,10 +1,35 @@
 import 'package:clima/services/location.dart';
 import 'package:clima/services/networking.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 const apiKey = '33eb85ad5466cc26e3114164c04f2fac';
 const unit ='metric';
+const openWeatherUrl = "api.openweathermap.org";
 
 class WeatherModel {
+
+  Future<dynamic> getCityWeather(String cityName) async{
+    var url = Uri.https(
+      openWeatherUrl,
+      '/data/2.5/weather',
+      {
+        'q': cityName,
+        'appid': apiKey,
+        'units': unit,
+      },
+    );
+    var response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var weatherData = await json.decode(response.body);
+      return weatherData;
+    } else {
+      print('Failed to load weather data');
+      print(response.statusCode);
+    }
+
+  }
 
   Future<dynamic> getLocationWeather() async{
     Location location = Location();

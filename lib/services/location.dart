@@ -12,7 +12,8 @@ class Location {
     if (await _checkLocationPermission()) {
       try {
         Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.low);
+            desiredAccuracy: LocationAccuracy.low); //low pour plus de precision
+
         latitude = position.latitude;
         longitude = position.longitude;
       } catch (e) {

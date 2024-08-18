@@ -73,14 +73,19 @@ class _LocationScreenState extends State<LocationScreen> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context){return CityScreen(); }));
+                    onPressed: () async{
+                      var tapedCity = await Navigator.push(context, MaterialPageRoute(builder: (context){return CityScreen(); }));
+                      if(tapedCity != null){
+                       var weatherData= await weather.getCityWeather(tapedCity);
+                       updateUI(weatherData);
+                      }
                     },
                     child: Icon(
                       Icons.location_city,
                       size: 50.0,
                     ),
                   ),
+
                 ],
               ),
               Padding(
